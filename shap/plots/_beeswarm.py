@@ -28,7 +28,7 @@ from ._utils import (
 # TODO: Add support for hclustering based explanations where we sort the leaf order by magnitude and then show the dendrogram to the left
 def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
              clustering=None, cluster_threshold=0.5, color=None,
-             axis_color="#333333", alpha=1, show=True, log_scale=False,
+             axis_color="#333333", alpha=1, marker_size = 10, marker_shape='o', show=True, log_scale=False,
              color_bar=True, plot_size="auto", color_bar_label=labels["FEATURE_VALUE"]):
     """Create a SHAP beeswarm plot, colored by feature values when they are provided.
 
@@ -374,7 +374,7 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
             # plot the nan fvalues in the interaction feature as grey
             nan_mask = np.isnan(fvalues)
             pl.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777",
-                        s=16, alpha=alpha, linewidth=0,
+                        s=marker_size, alpha=alpha, linewidth=0, marker=marker_shape,
                         zorder=3, rasterized=len(shaps) > 500)
 
             # plot the non-nan fvalues colored by the trimmed feature value
@@ -384,12 +384,12 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
             cvals[cvals_imp > vmax] = vmax
             cvals[cvals_imp < vmin] = vmin
             pl.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
-                        cmap=color, vmin=vmin, vmax=vmax, s=16,
+                        cmap=color, vmin=vmin, vmax=vmax, s=marker_size, marker=marker_shape, 
                         c=cvals, alpha=alpha, linewidth=0,
                         zorder=3, rasterized=len(shaps) > 500)
         else:
 
-            pl.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
+            pl.scatter(shaps, pos + ys, s=marker_size, alpha=alpha, linewidth=0, zorder=3, marker=marker_shape,
                         color=color if colored_feature else "#777777", rasterized=len(shaps) > 500)
 
 
@@ -437,7 +437,7 @@ def is_color_map(color):
 # TODO: remove unused title argument / use title argument
 # TODO: Add support for hclustering based explanations where we sort the leaf order by magnitude and then show the dendrogram to the left
 def summary_legacy(shap_values, features=None, feature_names=None, max_display=None, plot_type=None,
-                 color=None, axis_color="#333333", title=None, alpha=1, show=True, sort=True,
+                 color=None, axis_color="#333333", title=None, alpha=1, marker_size = 16, marker_shape='o', show=True, sort=True,
                  color_bar=True, plot_size="auto", layered_violin_max_num_bins=20, class_names=None,
                  class_inds=None,
                  color_bar_label=labels["FEATURE_VALUE"],
@@ -703,7 +703,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 # plot the nan values in the interaction feature as grey
                 nan_mask = np.isnan(values)
                 pl.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777",
-                           s=16, alpha=alpha, linewidth=0,
+                           s=marker_size, alpha=alpha, linewidth=0, marker=marker_shape,
                            zorder=3, rasterized=len(shaps) > 500)
 
                 # plot the non-nan values colored by the trimmed feature value
@@ -713,12 +713,12 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 cvals[cvals_imp > vmax] = vmax
                 cvals[cvals_imp < vmin] = vmin
                 pl.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
-                           cmap=cmap, vmin=vmin, vmax=vmax, s=16,
+                           cmap=cmap, vmin=vmin, vmax=vmax, s=marker_size, marker=marker_shape,
                            c=cvals, alpha=alpha, linewidth=0,
                            zorder=3, rasterized=len(shaps) > 500)
             else:
 
-                pl.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
+                pl.scatter(shaps, pos + ys, s=marker_size, alpha=alpha, linewidth=0, zorder=3, marker=marker_shape,
                            color=color if colored_feature else "#777777", rasterized=len(shaps) > 500)
 
     elif plot_type == "violin":
@@ -774,7 +774,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 # plot the nan values in the interaction feature as grey
                 nan_mask = np.isnan(values)
                 pl.scatter(shaps[nan_mask], np.ones(shap_values[nan_mask].shape[0]) * pos,
-                           color="#777777", s=9,
+                           color="#777777", s=marker_size,marker=marker_shape,
                            alpha=alpha, linewidth=0, zorder=1)
                 # plot the non-nan values colored by the trimmed feature value
                 cvals = values[np.invert(nan_mask)].astype(np.float64)
@@ -783,7 +783,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 cvals[cvals_imp > vmax] = vmax
                 cvals[cvals_imp < vmin] = vmin
                 pl.scatter(shaps[np.invert(nan_mask)], np.ones(shap_values[np.invert(nan_mask)].shape[0]) * pos,
-                           cmap=cmap, vmin=vmin, vmax=vmax, s=9,
+                           cmap=cmap, vmin=vmin, vmax=vmax, s=marker_size, marker=marker_shape,
                            c=cvals, alpha=alpha, linewidth=0, zorder=1)
                 # smooth_values -= nxp.nanpercentile(smooth_values, 5)
                 # smooth_values /= np.nanpercentile(smooth_values, 95)
