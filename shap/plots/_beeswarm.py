@@ -64,6 +64,8 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
 
     """
 
+    scatter_data = []  # Initialize list to store scatter data
+
     if not isinstance(shap_values, Explanation):
         emsg = (
             "The beeswarm plot requires an `Explanation` object as the "
@@ -356,6 +358,8 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
             last_bin = quant[ind]
         ys *= 0.9 * (row_height / np.max(ys + 1))
 
+        scatter_data.append((shaps, pos + ys))
+
         if safe_isinstance(color, "matplotlib.colors.Colormap") and features is not None and colored_feature:
             # trim the color range, but prevent the color range from collapsing
             vmin = np.nanpercentile(fvalues, 5)
@@ -422,6 +426,9 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
     if show:
         pl.show()
 
+    # Return the captured scatter data
+    return scatter_data
+
 def shorten_text(text, length_limit):
     if len(text) > length_limit:
         return text[:length_limit - 3] + "..."
@@ -479,6 +486,9 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
         Flag to print the mean of the SHAP values in the multi-output bar plot. Set to False
         by default.
     """
+
+
+    scatter_data = []  # Initialize list to store scatter data
 
     # support passing an explanation object
     if str(type(shap_values)).endswith("Explanation'>"):
@@ -652,6 +662,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
 
     if plot_type == "dot":
         for pos, i in enumerate(feature_order):
+            
             pl.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
             shaps = shap_values[:, i]
             values = None if features is None else features[:, i]
@@ -684,6 +695,8 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 layer += 1
                 last_bin = quant[ind]
             ys *= 0.9 * (row_height / np.max(ys + 1))
+
+            scatter_data.append((shaps, pos + ys))
 
             if features is not None and colored_feature:
                 # trim the color range, but prevent the color range from collapsing
@@ -951,3 +964,6 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
     pl.tight_layout()
     if show:
         pl.show()
+
+    # Return the captured scatter data
+    return scatter_data
